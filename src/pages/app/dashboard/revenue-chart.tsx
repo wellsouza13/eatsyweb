@@ -1,11 +1,10 @@
 import {
-    CartesianGrid,
     Line,
     LineChart,
     ResponsiveContainer,
-    Tooltip,
     XAxis,
     YAxis,
+    CartesianGrid
   } from 'recharts'
   import colors from 'tailwindcss/colors'
   
@@ -54,6 +53,7 @@ import {
                   })
                 }
               />
+              <CartesianGrid vertical={false} className="stroke-muted" />
               <Line
                 stroke={colors.violet[500]}
                 type="linear"
