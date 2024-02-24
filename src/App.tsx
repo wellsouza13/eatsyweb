@@ -1,3 +1,5 @@
+import "./global.css";
+
 import { RouterProvider } from 'react-router-dom'
 import { Toaster } from 'sonner'
 
