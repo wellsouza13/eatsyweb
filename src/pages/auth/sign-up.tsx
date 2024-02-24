@@ -1,45 +1,54 @@
-import { Helmet } from 'react-helmet-async'
-import { useForm } from 'react-hook-form'
-import { Link, useNavigate } from 'react-router-dom'
-import { toast } from 'sonner'
-import { z } from 'zod'
+import { Helmet } from "react-helmet-async";
+import { useForm } from "react-hook-form";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { z } from "zod";
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useMutation } from "@tanstack/react-query";
+import { registerRestaurant } from "@/api/register-restaurant";
 
 const signUpForm = z.object({
   restaurantName: z.string(),
   managerName: z.string(),
   phone: z.string(),
   email: z.string().email(),
-})
+});
 
-type SignUpForm = z.infer<typeof signUpForm>
+type SignUpForm = z.infer<typeof signUpForm>;
 
 export function SignUp() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const {
     register,
     handleSubmit,
     formState: { isSubmitting },
-  } = useForm<SignUpForm>()
+  } = useForm<SignUpForm>();
+
+  const { mutateAsync: registerRestaurantFn } = useMutation({
+    mutationFn: registerRestaurant,
+  });
 
   async function handleSignUp(data: SignUpForm) {
     try {
-      console.log(data)
+      await registerRestaurantFn({
+        restaurantName: data.restaurantName,
+        managerName: data.managerName,
+        email: data.email,
+        phone: data.phone,
+      });
 
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-
-      toast.success('Restaurante cadastrado com sucesso!', {
+      toast.success("Restaurante cadastrado com sucesso!", {
         action: {
-          label: 'Login',
-          onClick: () => navigate('/sign-in'),
+          label: "Login",
+          onClick: () => navigate(`/sign-in?email=${data.email}`),
         },
-      })
+      });
     } catch (error) {
-      toast.error('Erro ao cadastrar restaurante.')
+      toast.error("Erro ao cadastrar restaurante.");
     }
   }
 
@@ -68,7 +77,7 @@ export function SignUp() {
               <Input
                 id="restaurantName"
                 type="text"
-                {...register('restaurantName')}
+                {...register("restaurantName")}
               />
             </div>
 
@@ -77,18 +86,18 @@ export function SignUp() {
               <Input
                 id="managerName"
                 type="text"
-                {...register('managerName')}
+                {...register("managerName")}
               />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="email">Seu e-mail</Label>
-              <Input id="email" type="email" {...register('email')} />
+              <Input id="email" type="email" {...register("email")} />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="phone">Seu celular</Label>
-              <Input id="phone" type="tel" {...register('phone')} />
+              <Input id="phone" type="tel" {...register("phone")} />
             </div>
 
             <Button disabled={isSubmitting} className="w-full" type="submit">
@@ -96,11 +105,11 @@ export function SignUp() {
             </Button>
 
             <p className="px-6 text-center text-sm leading-relaxed text-muted-foreground">
-              Ao continuar, você concorda com nossos{' '}
+              Ao continuar, você concorda com nossos{" "}
               <a href="" className="underline underline-offset-4">
                 termos de serviço
-              </a>{' '}
-              e{' '}
+              </a>{" "}
+              e{" "}
               <a href="" className="underline underline-offset-4">
                 políticas de privacidade
               </a>
@@ -109,5 +118,5 @@ export function SignUp() {
         </div>
       </div>
     </>
-  )
+  );
 }
